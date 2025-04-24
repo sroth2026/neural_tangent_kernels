@@ -1,7 +1,8 @@
 """
 Train Transformer and compare to NTK/NTH kernel-based classifiers.
 """
-
+import numpy as np
+import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
@@ -67,4 +68,15 @@ def run_kernel_eval(model, train_inputs, train_labels, test_inputs, test_labels)
     acc_nth = (pred_nth_labels == test_labels).float().mean().item()
     print(f"[NTH Test Accuracy] {acc_nth:.4f}")
 
-    return acc_ntk, acc_nth
+    return acc_ntk, acc_nth, K_train_ntk, K_train_nth, pred_ntk, pred_nth
+
+
+
+def plot_prediction_confidences(preds, title):
+    preds = preds.detach().cpu().numpy()
+    plt.hist(preds, bins=20, alpha=0.7)
+    plt.title(title)
+    plt.xlabel("Predicted Value")
+    plt.ylabel("Frequency")
+    plt.grid(True)
+    plt.show()
