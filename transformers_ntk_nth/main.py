@@ -35,26 +35,38 @@ def evaluate_transformer(model, test_X, test_y):
     return acc
 
 def plot_results(transformer_losses, accs):
-    # Plot loss curve
-    plt.figure()
-    plt.plot(range(1, len(transformer_losses)+1), transformer_losses, marker='o')
+    import seaborn as sns
+    sns.set(style="whitegrid", font_scale=1.2)
+
+    # --- 1. Loss Curve ---
+    plt.figure(figsize=(8, 5))
+    plt.plot(range(1, len(transformer_losses)+1), transformer_losses, marker='o', linewidth=2)
     plt.title("Transformer Training Loss Over Epochs")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
-    # Bar chart of accuracies
+    # --- 2. Accuracy Bar Plot ---
     labels = ["Transformer", "NTK", "NTH"]
-    plt.figure()
-    plt.bar(labels, accs, alpha=0.7)
+    colors = ["#4c72b0", "#55a868", "#c44e52"]
+
+    plt.figure(figsize=(7, 5))
+    bars = plt.bar(labels, accs, color=colors, edgecolor='black')
     plt.title("Test Accuracy Comparison")
     plt.ylabel("Accuracy")
-    plt.ylim(0, 1)
-    plt.grid(True, axis='y')
-    for i, v in enumerate(accs):
-        plt.text(i, v + 0.02, f"{v:.2f}", ha='center')
+    plt.ylim(0, 1.05)
+    plt.grid(axis='y', linestyle='--', alpha=0.6)
+
+    # Add accuracy values above bars
+    for bar in bars:
+        yval = bar.get_height()
+        plt.text(bar.get_x() + bar.get_width()/2, yval + 0.02, f"{yval:.2f}", ha='center', va='bottom', fontsize=12)
+
+    plt.tight_layout()
     plt.show()
+
 
 def main():
     # === Load data ===
@@ -71,7 +83,7 @@ def main():
     # === Train Transformer and track loss ===
     print("\n[Training Transformer]")
     train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
-    transformer_losses = track_transformer_training(model, train_loader, epochs=3)
+    transformer_losses = track_transformer_training(model, train_loader, epochs=10)
 
 
     # === Evaluate Transformer ===
