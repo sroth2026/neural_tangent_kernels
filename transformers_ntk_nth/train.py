@@ -10,7 +10,7 @@ from transformer_model import SimpleTransformer
 from nth_kernel import compute_ntk, compute_nth, kernel_regression, compute_gradients
 from load_data import load_sst2
 
-def train_transformer(model, dataloader, epochs=1, lr=2e-4):
+def train_transformer(model, dataloader, epochs=10, lr=2e-4):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     model.train()
     for epoch in range(epochs):

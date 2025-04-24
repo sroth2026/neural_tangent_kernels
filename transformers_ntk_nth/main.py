@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from visualize import plot_kernel_heatmap
 
 
-def track_transformer_training(model, dataloader, epochs=3, lr=2e-4):
+def track_transformer_training(model, dataloader, epochs=10, lr=2e-4):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     model.train()
     losses = []
@@ -73,12 +73,14 @@ def main():
     train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
     transformer_losses = track_transformer_training(model, train_loader, epochs=3)
 
+
     # === Evaluate Transformer ===
     acc_transformer = evaluate_transformer(model, test_X, test_y)
     print(f"[Transformer Test Accuracy] {acc_transformer:.4f}")
 
     # === Run NTK + NTH ===
-    acc_ntk, acc_nth, K_train_ntk, K_train_nth, pred_ntk, pred_nth = run_kernel_eval(model, train_X, train_y, test_X, test_y)
+    kernel_model = SimpleTransformer()
+    acc_ntk, acc_nth, K_train_ntk, K_train_nth, pred_ntk, pred_nth = run_kernel_eval(kernel_model, train_X, train_y, test_X, test_y)
 
 
     # === Visualize Results ===
